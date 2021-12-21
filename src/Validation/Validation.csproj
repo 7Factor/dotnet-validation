@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>7Factor.Validation</AssemblyName>
+        <RootNamespace>_7Factor.Validation</RootNamespace>
+        <PackageId>7Factor.Validation</PackageId>
+        <RepositoryUrl>https://github.com/7Factor/dotnet-validation</RepositoryUrl>
+        <Company>7Factor Software</Company>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Authors>7Factor Software</Authors>
+        <PackageProjectUrl>https://github.com/7Factor/dotnet-validation</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+</Project>
