@@ -1,0 +1,51 @@
+name: Publish to NuGet Gallery
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    name: Build, Pack & Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get version number
+        id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Substitue version number
+        run: |
+          sed -i "s/1.0.0/${{steps.get_version.outputs.version-without-v}}/" src/Validation/Validation.csproj
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100'
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_ORG_API_KEY}}
+
+      - name: Build NuGet packages
+        run: |
+          cd src/Abstractions
+          dotnet pack -c Release -o out
+          cd ../../src/Sqs
+          dotnet pack -c Release -o out
+
+      - name: Publish NuGet package to NuGet Gallery
+        run: |
+          dotnet nuget push ./src/Validation/out/*.nupkg -k ${API_KEY} --no-symbols true -s https://api.nuget.org/v3/index.json
+        env:
+          API_KEY: ${{secrets.NUGET_ORG_API_KEY}}
+
+      - name: Create release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          tag_name: ${{github.ref}}
+          release_name: ${{steps.get_version.outputs.version}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
