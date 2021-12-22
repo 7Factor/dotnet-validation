@@ -355,6 +355,7 @@ public class NullabilityValidatorTest
     public void ValidatePropertyReferencesRecordStruct_NonNullablePropertyIsNotNullViaConstructor_IsValid()
     {
         NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyPrimaryConstructorRecordStruct(""));
+        NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyReadonlyRecordStruct(""));
     }
 
     [Fact]
@@ -363,6 +364,7 @@ public class NullabilityValidatorTest
         NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyPrimaryConstructorRecordStruct
             { Property = "" });
         NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyRecordStruct { Property = "" });
+        NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyReadonlyRecordStruct { Property = "" });
     }
 
     [Fact]
@@ -372,8 +374,13 @@ public class NullabilityValidatorTest
         var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyPrimaryConstructorRecordStruct()));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+
         e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyRecordStruct()));
+        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+
+        e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+            NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyReadonlyRecordStruct()));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
     }
 
@@ -385,8 +392,13 @@ public class NullabilityValidatorTest
             NullabilityValidator.ValidatePropertyReferences(
                 default(NonNullablePropertyPrimaryConstructorRecordStruct)));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+
         e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(default(NonNullablePropertyRecordStruct)));
+        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+
+        e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+            NullabilityValidator.ValidatePropertyReferences(default(NonNullablePropertyReadonlyRecordStruct)));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
     }
 
