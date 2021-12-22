@@ -30,9 +30,7 @@ jobs:
 
       - name: Build NuGet packages
         run: |
-          cd src/Abstractions
-          dotnet pack -c Release -o out
-          cd ../../src/Sqs
+          cd src/Validation
           dotnet pack -c Release -o out
 
       - name: Publish NuGet package to NuGet Gallery
