@@ -60,11 +60,9 @@ public class NullabilityValidator
         }
     }
 
-    private void ValidatePropertyReference(PropertyInfo prop, NullabilityInfo nullabilityInfo, object? propValue)
+    private void ValidatePropertyReference(PropertyInfo prop, NullabilityInfo propNullabilityInfo, object? propValue)
     {
-        var propTypeIsNonNullable = nullabilityInfo.WriteState == NullabilityState.NotNull;
-
-        if (propTypeIsNonNullable && propValue is null)
+        if (IsNonNullable(propNullabilityInfo) && propValue is null)
         {
             throw new NonNullableReferenceIsNullException(CreateExceptionPropName(prop));
         }
@@ -75,7 +73,7 @@ public class NullabilityValidator
                 return;
             case IEnumerable elems:
             {
-                ValidateEnumerableProperty(prop, nullabilityInfo, elems);
+                ValidateEnumerableProperty(prop, propNullabilityInfo, elems);
 
                 break;
             }
@@ -139,6 +137,11 @@ public class NullabilityValidator
     private static bool IsGenericTypeNonNullable(NullabilityInfo nullabilityInfo)
     {
         var typeArgsNullabilityInfo = nullabilityInfo.GenericTypeArguments;
-        return typeArgsNullabilityInfo.Length > 0 && typeArgsNullabilityInfo[0].WriteState == NullabilityState.NotNull;
+        return typeArgsNullabilityInfo.Length > 0 && IsNonNullable(typeArgsNullabilityInfo[0]);
+    }
+
+    private static bool IsNonNullable(NullabilityInfo nullabilityInfo)
+    {
+        return nullabilityInfo.WriteState == NullabilityState.NotNull;
     }
 }
