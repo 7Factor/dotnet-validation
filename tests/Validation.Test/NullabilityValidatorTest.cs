@@ -293,7 +293,7 @@ public class NullabilityValidatorTest
     {
         var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
-                { Elements = new List<NonNullablePropertyClass> { null } }));
+                { Elements = new List<NonNullablePropertyClass> { null! } }));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[0]"),
             e.Message);
     }
@@ -304,7 +304,7 @@ public class NullabilityValidatorTest
     {
         var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
-                { Elements = new List<NonNullablePropertyClass> { new() { Property = "" }, null } }));
+                { Elements = new List<NonNullablePropertyClass> { new() { Property = "" }, null! } }));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[1]"),
             e.Message);
     }
@@ -315,7 +315,7 @@ public class NullabilityValidatorTest
     {
         var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
-                { Elements = new List<NonNullablePropertyClass> { new(), null } }));
+                { Elements = new List<NonNullablePropertyClass> { new(), null! } }));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[0].Property"),
             e.Message);
     }
@@ -326,7 +326,7 @@ public class NullabilityValidatorTest
     {
         var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
-                { Elements = new HashSet<NonNullablePropertyClass> { null } }));
+                { Elements = new HashSet<NonNullablePropertyClass> { null! } }));
         Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[]"),
             e.Message);
     }
