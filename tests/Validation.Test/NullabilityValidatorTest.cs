@@ -14,16 +14,16 @@ public class NullabilityValidatorTest
     [Fact]
     public void ValidatePropertyReferences_NonNullablePropertyIsNull_IsNotValid()
     {
-        Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyClass()));
     }
 
     [Fact]
     public void ValidatePropertyReferences_NonNullablePropertyIsNull_IsNotValidExceptionContainsPropName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyClass()));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class NullabilityValidatorTest
     [Fact]
     public void ValidatePropertyReferences_NonNullablePropertyOnRecordIsNull_IsNotValid()
     {
-        Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyRecord()));
     }
 
@@ -73,25 +73,25 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferences_TwoNonNullableProperties1stPropIsNull_IsNotValidExceptionContains1stPropName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new TwoNonNullablePropertiesClass { Prop2 = "" }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Prop1"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Prop1"), e.Message);
     }
 
     [Fact]
     public void
         ValidatePropertyReferences_TwoNonNullableProperties2ndPropIsNull_IsNotValidExceptionContains2ndPropName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new TwoNonNullablePropertiesClass { Prop1 = "" }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Prop2"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Prop2"), e.Message);
     }
 
     [Fact]
     public void
         ValidatePropertyReferences_TwoNonNullablePropertiesBothPropsNull_IsNotValid()
     {
-        Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new TwoNonNullablePropertiesClass()));
         // Cannot assert which prop causes exception since order of props through reflection is indeterminate.
     }
@@ -112,14 +112,14 @@ public class NullabilityValidatorTest
     [Fact]
     public void ValidatePropertyReferences_MixedNullabilityPropertiesNonNullablePropIsNull_IsNotValid()
     {
-        Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new MixedNullabilityPropertiesClass { NullableProp = "" }));
     }
 
     [Fact]
     public void ValidatePropertyReferences_MixedNullabilityPropertiesBothPropAreNull_IsNotValid()
     {
-        Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new MixedNullabilityPropertiesClass()));
     }
 
@@ -135,19 +135,19 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnComplexClass_NonNullableChildIsNotNullAndNonNullablePropertyIsNull_IsNotValidExceptionContainsSubPropertyName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullableChildWithNonNullablePropertyClass
                 { Child = new NonNullablePropertyClass() }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Child.Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Child.Property"), e.Message);
     }
 
     [Fact]
     public void
         ValidatePropertyReferencesOnComplexClass_NonNullableChildIsNull_IsNotValidExceptionContainsSubPropertyName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullableChildWithNonNullablePropertyClass()));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Child"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Child"), e.Message);
     }
 
     [Fact]
@@ -178,10 +178,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnComplexClass_NullableChildIsNotNullAndNonNullablePropertyIsNull_IsNotValidExceptionContainsSubPropertyName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NullableChildWithNonNullablePropertyClass
                 { Child = new NonNullablePropertyClass() }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Child.Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Child.Property"), e.Message);
     }
 
     [Fact]
@@ -234,10 +234,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_ListWithNonNullablePropertyElementsWithOneNotValidElement_IsNotValidExceptionPointsTo1stElementProperty()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new List<NonNullablePropertyClass> { new() } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[0].Property"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[0].Property"),
             e.Message);
     }
 
@@ -245,10 +245,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_ListWithNonNullablePropertyElementsWith2ndElementNotValid_IsNotValidExceptionPointsTo2ndElementProperty()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new List<NonNullablePropertyClass> { new() { Property = "" }, new() } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[1].Property"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[1].Property"),
             e.Message);
     }
 
@@ -256,10 +256,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_SetWithNonNullablePropertyElementsWithOneNotValidElement_IsNotValidExceptionPointsToNonSpecificElementProperty()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new HashSet<NonNullablePropertyClass> { new() } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[].Property"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[].Property"),
             e.Message);
     }
 
@@ -291,10 +291,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_ListWithNonNullablePropertyElementsWithOneNullElement_IsNotValidExceptionPointsTo1stElement()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new List<NonNullablePropertyClass> { null! } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[0]"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[0]"),
             e.Message);
     }
 
@@ -302,10 +302,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_ListWithNonNullablePropertyElementsWhere2ndElementIsNull_IsNotValidExceptionPointsTo2ndElement()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new List<NonNullablePropertyClass> { new() { Property = "" }, null! } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[1]"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[1]"),
             e.Message);
     }
 
@@ -313,10 +313,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_ListWithNonNullablePropertyElementsWhere1stElementPropertyIsNullAnd2ndElementIsNull_IsNotValidExceptionPointsTo1stElementProperty()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new List<NonNullablePropertyClass> { new(), null! } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[0].Property"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[0].Property"),
             e.Message);
     }
 
@@ -324,10 +324,10 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesOnEnumerableProp_SetWithNonNullablePropertyElementsWithOneNullElement_IsNotValidExceptionPointsToNonSpecificElement()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new EnumerableNonNullablePropertyClass
                 { Elements = new HashSet<NonNullablePropertyClass> { null! } }));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Elements[]"),
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Elements[]"),
             e.Message);
     }
 
@@ -371,35 +371,35 @@ public class NullabilityValidatorTest
     public void
         ValidatePropertyReferencesRecordStruct_NonNullablePropertyIsNullViaConstructor_IsNotValidExceptionContainsPropName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyPrimaryConstructorRecordStruct()));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
 
-        e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyRecordStruct()));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
 
-        e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyReadonlyRecordStruct()));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
     }
 
     [Fact]
     public void
         ValidatePropertyReferencesRecordStruct_NonNullablePropertyCreateWithDefault_IsNotValidExceptionContainsPropName()
     {
-        var e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(
                 default(NonNullablePropertyPrimaryConstructorRecordStruct)));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
 
-        e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(default(NonNullablePropertyRecordStruct)));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
 
-        e = Assert.Throws<NonNullableReferenceIsNullException>(() =>
+        e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
             NullabilityValidator.ValidatePropertyReferences(default(NonNullablePropertyReadonlyRecordStruct)));
-        Assert.Equal(string.Format(NonNullableReferenceIsNullException.MessageFormat, "Property"), e.Message);
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
     }
 
     [Fact]

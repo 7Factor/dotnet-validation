@@ -22,7 +22,7 @@ public class NullabilityValidator
     /// Value type properties are not validated.
     /// </summary>
     /// <param name="o">The object to validate.</param>
-    /// <exception cref="NonNullableReferenceIsNullException">When validation fails.</exception>
+    /// <exception cref="NonNullablePropertyIsNullException">When validation fails.</exception>
     public static void ValidatePropertyReferences(object o)
     {
         ValidatePropertyReferences(o, null);
@@ -64,7 +64,7 @@ public class NullabilityValidator
     {
         if (IsNonNullable(propNullabilityInfo) && propValue is null)
         {
-            throw new NonNullableReferenceIsNullException(CreateExceptionPropName(prop));
+            throw new NonNullablePropertyIsNullException(CreateExceptionPropName(prop));
         }
 
         switch (propValue)
@@ -115,7 +115,7 @@ public class NullabilityValidator
     {
         if (elem.TypeIsNonNullable && elem.Value is null)
         {
-            throw new NonNullableReferenceIsNullException($"{CreateExceptionPropName(enumerableProp)}[{elem.Index}]");
+            throw new NonNullablePropertyIsNullException($"{CreateExceptionPropName(enumerableProp)}[{elem.Index}]");
         }
 
         if (elem.Value is not null && elem.TypeAssembly == _objectType.Assembly)
