@@ -366,6 +366,42 @@ public class NullabilityValidatorTest
     }
 
     [Fact]
+    public void ValidatePropertyReferences_NullableValuePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new NullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidatePropertyReferences_NullableValuePropertyIsNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new NullableValuePropertyClass());
+    }
+
+    [Fact]
+    public void ValidatePropertyReferences_NotNullNullableValuePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new NotNullNullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidatePropertyReferences_NotNullNonNullableValuePropertyIsNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new NotNullNullableValuePropertyClass());
+    }
+
+    [Fact]
+    public void ValidatePropertyReferences_DisallowNullableValuePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new DisallowNullNullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidatePropertyReferences_DisallowNonNullableValuePropertyIsNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new DisallowNullNullableValuePropertyClass());
+    }
+
+    [Fact]
     public void ValidatePropertyReferencesRecordStruct_NonNullablePropertyIsNotNullViaConstructor_IsValid()
     {
         NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyPrimaryConstructorRecordStruct(""));
@@ -438,5 +474,69 @@ public class NullabilityValidatorTest
     public void ValidatePropertyReferencesRecordStruct_NullablePropertyCreateWithDefault_IsValid()
     {
         NullabilityValidator.ValidatePropertyReferences(default(NullablePropertyRecordStruct));
+    }
+
+    [Fact]
+    public void ValidateProperties_NotNullNullablePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NotNullNullablePropertyClass { Property = "" });
+    }
+
+    [Fact]
+    public void ValidateProperties_NotNullNonNullablePropertyIsNull_IsNotValidExceptionContainsPropName()
+    {
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
+            NullabilityValidator.ValidateProperties(new NotNullNullablePropertyClass()));
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
+    }
+
+    [Fact]
+    public void ValidateProperties_NonNullableValueTypePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NonNullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidateProperties_NonNullableValuePropertyIsNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NonNullableValuePropertyClass());
+    }
+
+    [Fact]
+    public void ValidateProperties_NullableValuePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidateProperties_NullableValuePropertyIsNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NullableValuePropertyClass());
+    }
+
+    [Fact]
+    public void ValidateProperties_NotNullNullableValueTypePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NotNullNullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidateProperties_NotNullNullableValueTypePropertyIsNull_IsNotValidExceptionContainsPropName()
+    {
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
+            NullabilityValidator.ValidateProperties(new NotNullNullableValuePropertyClass()));
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
+    }
+
+    [Fact]
+    public void ValidateProperties_DisallowNullableValuePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new DisallowNullNullableValuePropertyClass { Property = 1 });
+    }
+
+    [Fact]
+    public void ValidateProperties_DisallowNonNullableValuePropertyIsNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new DisallowNullNullableValuePropertyClass());
     }
 }
