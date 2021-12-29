@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace _7Factor.Validation;
@@ -22,15 +23,32 @@ public class NullabilityValidator
     /// Value type properties are not validated.
     /// </summary>
     /// <param name="o">The object to validate.</param>
-    /// <exception cref="NonNullableReferenceIsNullException">When validation fails.</exception>
+    /// <exception cref="NonNullablePropertyIsNullException">When validation fails.</exception>
     public static void ValidatePropertyReferences(object o)
     {
-        ValidatePropertyReferences(o, null);
+        ValidateProperties(o, null, true);
     }
 
-    private static void ValidatePropertyReferences(object o, string? parentPath)
+    /// <summary>
+    /// Validates whether or not all of the properties with public getters of the given object return values that
+    /// adhere to the nullability of their types. For example, in a <c>#nullable enable</c> context, if a
+    /// property's type is a non-nullable reference type, and the value of the property is null, then validation fails.
+    /// This validation is recursive, such that types that have their own properties will be checked as well. This
+    /// includes elements in types that implement IEnumerable. However, behavior on an IDictionary type is unspecified.
+    /// Since non-nullable value types can never represent a null value, they will never be invalid. However, unlike
+    /// <see cref="ValidatePropertyReference"/>, this method will invalidate nullable value type properties marked with
+    /// <see cref="NotNullAttribute"/> if they have no value.
+    /// </summary>
+    /// <param name="o">The object to validate.</param>
+    /// <exception cref="NonNullablePropertyIsNullException">When validation fails.</exception>
+    public static void ValidateProperties(object o)
     {
-        new NullabilityValidator(o, parentPath).Validate();
+        ValidateProperties(o, null, false);
+    }
+
+    private static void ValidateProperties(object o, string? parentPath, bool ignoreValueTypes)
+    {
+        new NullabilityValidator(o, parentPath, ignoreValueTypes).Validate();
     }
 
     // The object being validated.
@@ -42,11 +60,15 @@ public class NullabilityValidator
     // A string holding the property path to this object or null if it's the top level being validated.
     private readonly string? _parentPath;
 
-    private NullabilityValidator(object o, string? parentPath)
+    // Whether or not validation should check nullable value types marked with the [NotNull] attribute.
+    private readonly bool _ignoreValueTypes;
+
+    private NullabilityValidator(object o, string? parentPath, bool ignoreValueTypes)
     {
         _object = o;
         _objectType = o.GetType();
         _parentPath = parentPath;
+        _ignoreValueTypes = ignoreValueTypes;
     }
 
     private void Validate()
@@ -54,17 +76,25 @@ public class NullabilityValidator
         foreach (var prop in _objectType.GetProperties())
         {
             var nullabilityInfo = NullabilityInfoContext.Create(prop);
-            if (nullabilityInfo.Type.IsValueType) continue;
+            if (IsIgnorableType(nullabilityInfo))
+            {
+                continue;
+            }
 
             ValidatePropertyReference(prop, nullabilityInfo, prop.GetValue(_object));
         }
+    }
+
+    private bool IsIgnorableType(NullabilityInfo nullabilityInfo)
+    {
+        return _ignoreValueTypes && nullabilityInfo.Type.IsValueType;
     }
 
     private void ValidatePropertyReference(PropertyInfo prop, NullabilityInfo propNullabilityInfo, object? propValue)
     {
         if (IsNonNullable(propNullabilityInfo) && propValue is null)
         {
-            throw new NonNullableReferenceIsNullException(CreateExceptionPropName(prop));
+            throw new NonNullablePropertyIsNullException(CreateExceptionPropName(prop));
         }
 
         switch (propValue)
@@ -82,7 +112,7 @@ public class NullabilityValidator
                 if (prop.PropertyType.Assembly == _objectType.Assembly)
                 {
                     // prop is object potentially with its own properties.
-                    ValidatePropertyReferences(propValue, $"{prop.Name}.");
+                    ValidateProperties(propValue, $"{prop.Name}.", _ignoreValueTypes);
                 }
 
                 break;
@@ -115,12 +145,12 @@ public class NullabilityValidator
     {
         if (elem.TypeIsNonNullable && elem.Value is null)
         {
-            throw new NonNullableReferenceIsNullException($"{CreateExceptionPropName(enumerableProp)}[{elem.Index}]");
+            throw new NonNullablePropertyIsNullException($"{CreateExceptionPropName(enumerableProp)}[{elem.Index}]");
         }
 
         if (elem.Value is not null && elem.TypeAssembly == _objectType.Assembly)
         {
-            ValidatePropertyReferences(elem.Value, $"{enumerableProp.Name}[{elem.Index}].");
+            ValidateProperties(elem.Value, $"{enumerableProp.Name}[{elem.Index}].", _ignoreValueTypes);
         }
     }
 
@@ -142,6 +172,6 @@ public class NullabilityValidator
 
     private static bool IsNonNullable(NullabilityInfo nullabilityInfo)
     {
-        return nullabilityInfo.WriteState == NullabilityState.NotNull;
+        return nullabilityInfo.ReadState == NullabilityState.NotNull;
     }
 }
