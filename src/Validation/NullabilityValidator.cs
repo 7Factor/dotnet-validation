@@ -142,6 +142,6 @@ public class NullabilityValidator
 
     private static bool IsNonNullable(NullabilityInfo nullabilityInfo)
     {
-        return nullabilityInfo.WriteState == NullabilityState.NotNull;
+        return nullabilityInfo.ReadState == NullabilityState.NotNull;
     }
 }

@@ -352,6 +352,20 @@ public class NullabilityValidatorTest
     }
 
     [Fact]
+    public void ValidatePropertyReferences_NotNullNullablePropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidatePropertyReferences(new NotNullNullablePropertyClass { Property = "" });
+    }
+
+    [Fact]
+    public void ValidatePropertyReferences_NotNullNonNullablePropertyIsNull_IsNotValidExceptionContainsPropName()
+    {
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
+            NullabilityValidator.ValidatePropertyReferences(new NotNullNullablePropertyClass()));
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
+    }
+
+    [Fact]
     public void ValidatePropertyReferencesRecordStruct_NonNullablePropertyIsNotNullViaConstructor_IsValid()
     {
         NullabilityValidator.ValidatePropertyReferences(new NonNullablePropertyPrimaryConstructorRecordStruct(""));
