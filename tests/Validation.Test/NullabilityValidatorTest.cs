@@ -539,4 +539,34 @@ public class NullabilityValidatorTest
     {
         NullabilityValidator.ValidateProperties(new DisallowNullNullableValuePropertyClass());
     }
+
+    [Fact]
+    public void ValidateProperties_NonNullablePrimaryConstructorPropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NonNullablePropertyPrimaryConstructorRecord(""));
+    }
+
+    [Fact]
+    public void ValidateProperties_NonNullablePrimaryConstructorPropertyIsNull_IsValidIsNotValidExceptionContainsPropName()
+    {
+#pragma warning disable CS8625
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
+            NullabilityValidator.ValidateProperties(new NonNullablePropertyPrimaryConstructorRecord(null)));
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
+#pragma warning restore CS8625
+    }
+
+    [Fact]
+    public void ValidateProperties_NotNullNullablePrimaryConstructorPropertyIsNotNull_IsValid()
+    {
+        NullabilityValidator.ValidateProperties(new NotNullNullablePropertyPrimaryConstructorRecord(""));
+    }
+
+    [Fact]
+    public void ValidateProperties_NotNullNullablePrimaryConstructorPropertyIsNull_IsValidIsNotValidExceptionContainsPropName()
+    {
+        var e = Assert.Throws<NonNullablePropertyIsNullException>(() =>
+            NullabilityValidator.ValidateProperties(new NotNullNullablePropertyPrimaryConstructorRecord(null)));
+        Assert.Equal(string.Format(NonNullablePropertyIsNullException.MessageFormat, "Property"), e.Message);
+    }
 }
